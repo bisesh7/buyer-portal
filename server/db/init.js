@@ -14,7 +14,7 @@ db.serialize(() => {
        CREATE TABLE IF NOT EXISTS properties (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
-            description TEXT,
+            location TEXT,
             price REAL NOT NULL) 
     `);
 
