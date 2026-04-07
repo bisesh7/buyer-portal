@@ -52,4 +52,4 @@ db.serialize(() => {
   console.log("Database initialized with tables amd mock properties!");
 });
 
-module.exports = db;
+export default db;
