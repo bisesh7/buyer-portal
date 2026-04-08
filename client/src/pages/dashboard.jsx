@@ -19,8 +19,21 @@ export default function Dashboard() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({ show: false, message: "", variant: "" });
+  const [user, setUser] = useState({ name: "", role: "" }); // NEW
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setUser({ name: payload.name, role: payload.role });
+      } catch (err) {
+        console.error("Failed to decode token", err);
+      }
+    }
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -95,7 +108,14 @@ export default function Dashboard() {
 
       <Container className="mt-4">
         <h2 className="mb-4">Dashboard</h2>
-
+        <Card className="mb-4">
+          <Card.Body>
+            <h4>Welcome, {user.name}!</h4>
+            <p>
+              <strong>Role:</strong> {user.role}
+            </p>
+          </Card.Body>
+        </Card>
         {/* Alert */}
         {alert.show && (
           <Alert

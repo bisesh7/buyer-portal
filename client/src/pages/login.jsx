@@ -48,7 +48,6 @@ export default function Login() {
       <Card style={{ width: "400px", padding: "20px" }}>
         <h2 className="mb-3 text-center">Login</h2>
 
-        {/* Alert */}
         {alert.show && (
           <Alert
             variant={alert.variant}
