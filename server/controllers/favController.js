@@ -18,7 +18,7 @@ export const getFavoritesByUserId = (req, res) => {
 };
 
 export const addFavorite = (req, res) => {
-  const { property_id } = req.body;
+  const { property_id } = req.params;
   const query = "INSERT INTO favorites (user_id, property_id) VALUES (?, ?)";
 
   db.run(query, [req.user.id, property_id], (err) => {

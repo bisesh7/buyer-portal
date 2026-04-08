@@ -23,7 +23,7 @@ router.get("/properties/:id", getPropertyById);
 
 //Favorites
 router.get("/favorites", auth, getFavoritesByUserId);
-router.post("/favorites", auth, addFavorite);
+router.post("/favorites/:property_id", auth, addFavorite);
 router.delete("/favorites/:property_id", auth, removeFavorite);
 
 export default router;
