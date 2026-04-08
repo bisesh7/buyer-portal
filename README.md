@@ -103,8 +103,6 @@ Click the **Logout** button in the navbar to end your session and clear the JWT 
 | `PORT`       | Port the Express server listens on (default: `5002`) |
 | `JWT_SECRET` | Secret key used to sign and verify JWT tokens        |
 
-> ⚠️ Never commit your `.env` file. Add it to `.gitignore`.
-
 ---
 
 ## License
