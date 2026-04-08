@@ -49,6 +49,10 @@ export default function Login() {
           <Button variant="primary" onClick={handleLogin} className="w-100">
             Login
           </Button>
+
+          <p className="mt-3 text-center">
+            Don't have an account? <a href="/signup">Signup</a>
+          </p>
         </Form>
       </Card>
     </Container>
