@@ -15,42 +15,30 @@ import { useNavigate } from "react-router-dom";
 import { getPropertyImage } from "../utils/randomImage.js";
 import AppNavbar from "../components/navbar.jsx";
 
-export default function Dashboard() {
-  const [properties, setProperties] = useState([]);
+export default function Favorites() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({ show: false, message: "", variant: "" });
-  const [user, setUser] = useState({ name: "", role: "" }); // NEW
 
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        setUser({ name: payload.name, role: payload.role });
-      } catch (err) {
-        console.error("Failed to decode token", err);
-      }
-    }
+    fetchFavorites();
   }, []);
 
-  const fetchData = async () => {
+  const fetchFavorites = async () => {
     try {
       setLoading(true);
-
-      const [propRes, favRes] = await Promise.all([
-        API.get("/properties"),
-        API.get("/favorites"),
-      ]);
-
-      setProperties(propRes.data);
-      setFavorites(favRes.data.map((p) => p.id));
+      const res = await API.get("/favorites", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFavorites(res.data);
     } catch (err) {
       setAlert({
         show: true,
-        message: "Failed to load data",
+        message: "Failed to load favorites",
         variant: "danger",
       });
     } finally {
@@ -58,49 +46,28 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const toggleFavorite = async (id) => {
+  const removeFavorite = async (propertyId) => {
     try {
-      if (favorites.includes(id)) {
-        await API.delete(`/favorites/${id}`);
-        setAlert({
-          show: true,
-          message: "Removed from favorites",
-          variant: "warning",
-        });
-      } else {
-        await API.post(`/favorites/${id}`);
-        setAlert({
-          show: true,
-          message: "Added to favorites",
-          variant: "success",
-        });
-      }
-
-      fetchData();
-    } catch (err) {
+      await API.delete(`/favorites/${propertyId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setAlert({
         show: true,
-        message: "Action failed",
-        variant: "danger",
+        message: "Removed from favorites",
+        variant: "warning",
       });
+      fetchFavorites();
+    } catch (err) {
+      setAlert({ show: true, message: "Action failed", variant: "danger" });
     }
   };
 
   return (
     <>
-      <AppNavbar
-        navLinks={[
-          { label: `Welcome, ${user.name} (${user.role})` },
-          { label: "My Favorites", path: "/favorites" },
-        ]}
-      />
+      <AppNavbar navLinks={[{ label: "Dashboard", path: "/dashboard" }]} />
 
       <Container className="mt-4">
-        <h2 className="mb-4">Dashboard</h2>
+        <h2 className="mb-4">My Favorites</h2>
 
         {/* Alert */}
         {alert.show && (
@@ -113,16 +80,17 @@ export default function Dashboard() {
           </Alert>
         )}
 
-        {/* Loading */}
         {loading ? (
           <div className="text-center mt-5">
             <Spinner animation="border" />
           </div>
+        ) : favorites.length === 0 ? (
+          <p>You have no favorite properties yet.</p>
         ) : (
           <Row xs={1} md={2} lg={3} className="g-4">
-            {properties.map((p) => (
+            {favorites.map((p) => (
               <Col key={p.id}>
-                <Card key={p.id}>
+                <Card>
                   <Card.Img
                     variant="top"
                     src={getPropertyImage(p.id)}
@@ -138,10 +106,11 @@ export default function Dashboard() {
                     </Card.Text>
 
                     <Button
-                      variant={favorites.includes(p.id) ? "danger" : "success"}
-                      onClick={() => toggleFavorite(p.id)}
+                      variant="danger"
+                      className="w-100"
+                      onClick={() => removeFavorite(p.id)}
                     >
-                      {favorites.includes(p.id) ? "💔 Remove" : "❤️ Add"}
+                      💔 Remove
                     </Button>
                   </Card.Body>
                 </Card>
