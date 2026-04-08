@@ -1,4 +1,4 @@
-import db from "./database.js";
+import db from "../db/database.js";
 
 export const getAllProperties = (req, res) => {
   const query = "SELECT * FROM properties";
