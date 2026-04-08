@@ -6,10 +6,14 @@ export const register = async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
 
   if (!name) return res.status(400).json({ message: "Name is required" });
+  if (!password)
+    return res.status(400).json({ message: "Password is required" });
 
   if (password !== confirmPassword) {
     return res.status(400).json({ message: "Invalid Credentials" });
   }
+
+  if (!email) return res.status(400).json({ message: "Email is required" });
 
   try {
     const existingUser = db.run("SELECT * FROM users WHERE email = ?", [email]);
@@ -32,6 +36,9 @@ export const register = async (req, res) => {
 
 export const login = (req, res) => {
   const { email, password } = req.body;
+
+  if (!email) return res.status(400).json({ error: "Email is required" });
+  if (!password) return res.status(400).json({ error: "Password is required" });
 
   db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
     if (!user) return res.status(400).json({ error: "Invalid credentials" });
