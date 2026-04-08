@@ -10,20 +10,22 @@ const SECRET = process.env.JWT_SECRET;
 export const register = async (req, res) => {
   const { email, password, confirmPassword } = req.body;
 
+  console.log(req.body);
+
   if (password !== confirmPassword) {
-    return res.status(400).json({ message: "Passwords do not match" });
+    return res.status(400).json({ message: "Invalid Credentials" });
   }
 
   try {
-    const existingUser = await db.query("SELECT * FROM users WHERE email = ?", [
+    const existingUser = await db.run("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
     if (existingUser.length > 0) {
-      return res.status(400).json({ message: "Email already in use" });
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await db.query("INSERT INTO users (email, password) VALUES (?, ?)", [
+    db.run("INSERT INTO users (email, password) VALUES (?, ?)", [
       email,
       hashedPassword,
     ]);
@@ -37,26 +39,15 @@ export const register = async (req, res) => {
 export const login = (req, res) => {
   const { email, password } = req.body;
 
-  db.query(
-    "SELECT * FROM users WHERE email = ?",
-    [email],
-    async (err, results) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Server error" });
-      }
-      if (results.length === 0) {
-        return res.status(400).json({ message: "Invalid email or password" });
-      }
+  db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
+    if (!user) return res.status(400).json({ error: "Invalid credentials" });
 
-      const user = results[0];
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ message: "Invalid email or password" });
-      }
+    const isValid = bcrypt.compareSync(password, user.password);
+    if (!isValid) return res.status(400).json({ error: "Invalid credentials" });
 
-      const token = jwt.sign({ id: user.id }, SECRET, { expiresIn: "1h" });
-      res.json({ token });
-    },
-  );
+    const token = jwt.sign({ id: user.id, email: user.email }, SECRET, {
+      expiresIn: "1h",
+    });
+    res.json({ token });
+  });
 };
