@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 
 export default function Signup() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -31,7 +32,7 @@ export default function Signup() {
     }
 
     try {
-      await API.post("/register", { email, password, confirmPassword });
+      await API.post("/register", { name, email, password, confirmPassword });
       setAlert({
         show: true,
         message: "Signup successful! Redirecting to login...",
@@ -69,6 +70,16 @@ export default function Signup() {
         )}
 
         <Form>
+          <Form.Group className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Form.Group>
+
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
             <Form.Control
