@@ -1,8 +1,4 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
-
-const SECRET = process.env.SECRET_KEY;
 
 export default (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -12,10 +8,11 @@ export default (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
-  } catch {
+  } catch (err) {
+    console.log("JWT ERROR:", err.message);
     res.status(401).json({ error: "Invalid token" });
   }
 };

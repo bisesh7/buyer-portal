@@ -1,16 +1,9 @@
 import db from "../db/database.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const SECRET = process.env.JWT_SECRET;
 
 export const register = async (req, res) => {
   const { email, password, confirmPassword } = req.body;
-
-  console.log(req.body);
 
   if (password !== confirmPassword) {
     return res.status(400).json({ message: "Invalid Credentials" });
@@ -45,9 +38,13 @@ export const login = (req, res) => {
     const isValid = bcrypt.compareSync(password, user.password);
     if (!isValid) return res.status(400).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      },
+    );
     res.json({ token });
   });
 };

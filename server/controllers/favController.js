@@ -7,6 +7,7 @@ export const getFavoritesByUserId = (req, res) => {
         JOIN properties ON favorites.property_id = properties.id
         WHERE favorites.user_id =?
     `;
+  console.log("SECRET:", process.env.JWT_SECRET);
 
   db.all(query, [req.user.id], (err, rows) => {
     if (err) {
