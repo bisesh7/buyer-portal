@@ -1,20 +1,42 @@
 import { useState } from "react";
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Card } from "react-bootstrap";
+import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [alert, setAlert] = useState({ show: false, message: "", variant: "" });
+
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      setAlert({
+        show: true,
+        message: "Please fill all fields",
+        variant: "warning",
+      });
+      return;
+    }
+
     try {
       const res = await API.post("/login", { email, password });
       localStorage.setItem("token", res.data.token);
-      navigate("/dashboard");
+
+      setAlert({
+        show: true,
+        message: "Login successful! Redirecting...",
+        variant: "success",
+      });
+
+      setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {
-      alert("Login failed");
+      setAlert({
+        show: true,
+        message: err.response?.data?.message || "Login failed",
+        variant: "danger",
+      });
     }
   };
 
@@ -25,6 +47,18 @@ export default function Login() {
     >
       <Card style={{ width: "400px", padding: "20px" }}>
         <h2 className="mb-3 text-center">Login</h2>
+
+        {/* Alert */}
+        {alert.show && (
+          <Alert
+            variant={alert.variant}
+            onClose={() => setAlert({ ...alert, show: false })}
+            dismissible
+          >
+            {alert.message}
+          </Alert>
+        )}
+
         <Form>
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
