@@ -2,7 +2,6 @@ import db from "../db/database.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import e from "express";
 
 dotenv.config();
 
