@@ -33,17 +33,17 @@ db.serialize(() => {
 
   db.run(
     `
-        INSERT OR IGNORE INTO properties (id, title, location, price) VALUES
-        (1, 'City Center Apartment', 'New York', 500000),
-        (2, 'Beachfront Villa', 'California', 1200000),
-        (3, 'Luxury Condo', 'Miami', 800000),
-        (4, 'Suburban House', 'Austin', 450000),
-        (5, 'Downtown Loft', 'Chicago', 600000),
-        (6, 'Mountain Cabin', 'Colorado', 350000),
-        (7, 'Penthouse Suite', 'Los Angeles', 2000000),
-        (8, 'Countryside Cottage', 'Vermont', 300000),
-        (9, 'Riverside Townhouse', 'Seattle', 700000),
-        (10, 'Modern Studio', 'San Francisco', 550000)    
+    INSERT OR IGNORE INTO properties (id, title, location, price) VALUES
+      (1, 'City Center Apartment', 'Kathmandu', 5000000),
+      (2, 'Riverside Villa', 'Pokhara', 12000000),
+      (3, 'Luxury Condo', 'Lalitpur', 8000000),
+      (4, 'Suburban House', 'Bhaktapur', 4500000),
+      (5, 'Downtown Loft', 'Biratnagar', 6000000),
+      (6, 'Mountain Cabin', 'Namche Bazaar', 3500000),
+      (7, 'Penthouse Suite', 'Chitwan', 20000000),
+      (8, 'Countryside Cottage', 'Bandipur', 3000000),
+      (9, 'Riverside Townhouse', 'Dhulikhel', 7000000),
+      (10, 'Modern Studio', 'Janakpur', 5500000)
     `,
     (err) => {
       if (err) console.error("Error inserting properties:", err.message);
